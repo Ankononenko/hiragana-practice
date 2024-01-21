@@ -137,6 +137,9 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
     var isPracticeCompleted by remember { mutableStateOf(false) }
 
     fun checkAnswer() {
+        if (userInput.trim().isEmpty()){
+            return;
+        }
         if (userInput.lowercase().trim() == currentPair.value) {
             feedback = "Correct!"
         } else {
