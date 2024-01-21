@@ -10,8 +10,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.hiragana.ui.theme.HiraganaTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.input.ImeAction
 
 class MainActivity : ComponentActivity() {
@@ -134,6 +139,7 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
 
     val numCorrectAnswers = 46;
     var numCorrectAnswersCurrent by remember { mutableStateOf(46) };
+    var incorrectAnswers = remember { mutableMapOf<String, String>() }
     var isPracticeCompleted by remember { mutableStateOf(false) }
 
     fun checkAnswer() {
@@ -143,6 +149,7 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
         if (userInput.lowercase().trim() == currentPair.value) {
             feedback = "Correct!"
         } else {
+            incorrectAnswers.put(currentPair.key, userInput.lowercase().trim())
             feedback = """Incorrect, the right answer is "${currentPair.value}""""
             --numCorrectAnswersCurrent;
         }
@@ -161,26 +168,65 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
 
     Column(modifier = Modifier.padding(16.dp))
     {
-        Text("What is the Romaji for ${currentPair.key}?")
+        if(!isPracticeCompleted) {
 
-        TextField(
-            value = userInput,
-            onValueChange = { userInput = it},
-            label = { Text("Enter Romaji")},
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {checkAnswer()})
-        )
+            Text("What is the Romaji for ${currentPair.key}?")
 
-        Button(onClick = {
-            checkAnswer()
-        }) {
-            Text("Check")
-        }
-        Text(feedback)
+            TextField(
+                value = userInput,
+                onValueChange = { userInput = it},
+                label = { Text("Enter Romaji")},
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {checkAnswer()})
+            )
 
-        if (isPracticeCompleted) {
-            Button(onClick = navigateToMainScreen) {
-                Text("Return to main screen")
+            Button(onClick = {
+                checkAnswer()
+            }) {
+                Text("Check")
+            }
+            Text(feedback)
+        } else {
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                item {
+                    Text("Review Incorrect Answers", fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row {
+                        Text(
+                            "Hiragana character",
+                            modifier = Modifier.weight(1f),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "Incorrect Answer",
+                            modifier = Modifier.weight(1f),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "Correct \nAnswer",
+                            modifier = Modifier.weight(1f),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                incorrectAnswers.forEach { (hiragana, userAnswer) ->
+                    item {
+                        Row {
+                            Text("$hiragana", modifier = Modifier.weight(1f))
+                            Text(userAnswer, modifier = Modifier.weight(1f))
+                            val correctAnswer = hiraganaToRomajiMap[hiragana] ?: "N/A"
+                            Text(correctAnswer, modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = navigateToMainScreen) {
+                        Text("Return to main screen")
+                    }
+                }
             }
         }
     }
