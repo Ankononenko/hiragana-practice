@@ -46,12 +46,14 @@ class MainActivity : ComponentActivity() {
                     composable("mainScreen") {
                         Pushwoosh.getInstance().registerForPushNotifications()
                         Greeting(name = "Misha") {
-                            navController.navigate("newScreen")
+                            navController.navigate("romanizedHiraganaPractice")
                         }
                     }
-                    composable("newScreen") {
+                    composable("romanizedHiraganaPractice") {
                         // New screen content
-                        RandomizedHiraganaToRomajiPractice()
+                        RandomizedHiraganaToRomajiPractice(navigateToMainScreen = {
+                            navController.navigate("mainScreen")
+                        })
                     }
                 }
             }
@@ -107,7 +109,7 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun RandomizedHiraganaToRomajiPractice() {
+fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
     var hiraganaToRomajiMap = mapOf (
@@ -130,18 +132,27 @@ fun RandomizedHiraganaToRomajiPractice() {
     var userInput by remember { mutableStateOf("") }
     var feedback by remember { mutableStateOf("") }
 
+    val numCorrectAnswers = 46;
+    var numCorrectAnswersCurrent by remember { mutableStateOf(46) };
+    var isPracticeCompleted by remember { mutableStateOf(false) }
+
     fun checkAnswer() {
         if (userInput.lowercase().trim() == currentPair.value) {
             feedback = "Correct!"
         } else {
             feedback = """Incorrect, the right answer is "${currentPair.value}""""
+            --numCorrectAnswersCurrent;
         }
 
         if (shuffledMap.hasNext()) {
             currentPair = shuffledMap.next()
             userInput = ""
         } else {
-            feedback = "All done!"
+            val answers = "answer";
+            feedback = """All done!
+                |${numCorrectAnswersCurrent} correct ${answers.pluralize(numCorrectAnswersCurrent)} out of ${numCorrectAnswers}.
+            """.trimMargin()
+            isPracticeCompleted = true;
         }
     }
 
@@ -163,5 +174,15 @@ fun RandomizedHiraganaToRomajiPractice() {
             Text("Check")
         }
         Text(feedback)
+
+        if (isPracticeCompleted) {
+            Button(onClick = navigateToMainScreen) {
+                Text("Return to main screen")
+            }
+        }
     }
 } }
+
+fun String.pluralize(count: Int): String {
+    return if (count == 1) this else "${this}s"
+}
