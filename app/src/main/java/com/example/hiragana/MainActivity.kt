@@ -170,12 +170,12 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
     {
         if(!isPracticeCompleted) {
 
-            Text("What is the Romaji for ${currentPair.key}?")
+            Text("What is the romaji for ${currentPair.key}?")
 
             TextField(
                 value = userInput,
                 onValueChange = { userInput = it},
-                label = { Text("Enter Romaji")},
+                label = { Text("Enter romaji")},
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {checkAnswer()})
             )
@@ -189,7 +189,7 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
         } else {
             LazyColumn(modifier = Modifier.padding(16.dp)) {
                 item {
-                    Text("Review Incorrect Answers", fontWeight = FontWeight.Bold)
+                    Text("Review incorrect answers", fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(16.dp))
                     Row {
                         Text(
@@ -198,12 +198,12 @@ fun RandomizedHiraganaToRomajiPractice(navigateToMainScreen: () -> Unit) {
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Incorrect Answer",
+                            "Incorrect answer",
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Correct \nAnswer",
+                            "Correct \nanswer",
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Bold
                         )
