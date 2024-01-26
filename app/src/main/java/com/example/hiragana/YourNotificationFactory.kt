@@ -14,9 +14,15 @@ class YourNotificationFactory : PushwooshNotificationFactory() {
         val customNotification = true
         if (customNotification && getLargeIcon(pushMessage) != null) {
             val largeIcon = getLargeIcon(pushMessage)
-            // Make a RemoteView by using the largeIcon from PW control panel
-            val remoteViews = RemoteViews(getApplicationContext()?.packageName ?: "com.example.hiragana", R.layout.custom_notification_layout)
+            // Text over the stretched small icon:
+            val remoteViews = RemoteViews(getApplicationContext()?.packageName, R.layout.custom_notification_layout)
             remoteViews.setImageViewBitmap(R.id.your_image_view_id, largeIcon)
+            remoteViews.setTextViewText(R.id.your_text_view_id, pushMessage.message)
+
+            // Make a RemoteView by using the largeIcon from PW control pane
+            // Just streched small icon view
+//            val remoteViews = RemoteViews(getApplicationContext()?.packageName ?: "com.example.hiragana", R.layout.custom_notification_layout)
+//            remoteViews.setImageViewBitmap(R.id.your_image_view_id, largeIcon)
             Log.d("YourNotificationFactory", "Using custom notification view")
             val channelId = addChannel(pushMessage)
             val builder = getApplicationContext()?.let { context ->
