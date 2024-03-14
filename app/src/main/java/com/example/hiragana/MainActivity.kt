@@ -21,10 +21,12 @@ import com.example.hiragana.ui.theme.HiraganaTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.pushwoosh.Pushwoosh
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Pushwoosh.getInstance().registerForPushNotifications()
         setContent {
             HiraganaTheme {
                 HiraganaApp()
